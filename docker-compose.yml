@@ -1,21 +1,21 @@
 services:
   postgres:
     image: postgres:16
-    container_name: it-man-postgres
+    container_name: cora-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-it_man}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-it_man}
-      POSTGRES_DB: ${POSTGRES_DB:-it_man}
+      POSTGRES_USER: ${POSTGRES_USER:-cora}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cora}
+      POSTGRES_DB: ${POSTGRES_DB:-cora}
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - it_man_postgres_data:/var/lib/postgresql/data
+      - cora_postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-it_man}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-cora}"]
       interval: 5s
       timeout: 5s
       retries: 5
 
 volumes:
-  it_man_postgres_data:
+  cora_postgres_data:

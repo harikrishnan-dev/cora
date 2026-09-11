@@ -4,7 +4,7 @@ API key or a database."""
 
 from langchain_core.runnables import RunnableLambda
 
-from it_man.agents.graph import build_graph
+from cora.agents.graph import build_graph
 
 
 class _FakeChatModel:

@@ -1,4 +1,4 @@
-"""Bootstraps the Postgres database for it-man.
+"""Bootstraps the Postgres database for CORA.
 
 Creates the `customers`, `products`, `orders`, `order_items`, and
 `refund_requests` tables (if they don't already exist) and fills the first
@@ -82,11 +82,11 @@ def load_data(name: str) -> list[dict]:
 def get_database_url() -> str:
     return os.environ.get("DATABASE_URL") or (
         "postgresql://{user}:{password}@{host}:{port}/{db}".format(
-            user=os.environ.get("POSTGRES_USER", "it_man"),
-            password=os.environ.get("POSTGRES_PASSWORD", "it_man"),
+            user=os.environ.get("POSTGRES_USER", "cora"),
+            password=os.environ.get("POSTGRES_PASSWORD", "cora"),
             host=os.environ.get("POSTGRES_HOST", "localhost"),
             port=os.environ.get("POSTGRES_PORT", "5432"),
-            db=os.environ.get("POSTGRES_DB", "it_man"),
+            db=os.environ.get("POSTGRES_DB", "cora"),
         )
     )
 

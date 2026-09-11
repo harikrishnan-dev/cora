@@ -1,7 +1,7 @@
 from langgraph.graph import END
 
-from it_man.agents.graph import route_after_classify, route_after_gather
-from it_man.agents.state import HelpdeskState
+from cora.agents.graph import route_after_classify, route_after_gather
+from cora.agents.state import HelpdeskState
 
 
 def _state(**overrides) -> HelpdeskState:

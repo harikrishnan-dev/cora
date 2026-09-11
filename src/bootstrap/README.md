@@ -1,7 +1,7 @@
 # bootstrap
 
-Standalone script for setting up local Postgres data for it-man. It isn't
-part of the `it_man` package -- it's a one-off tool you run against your dev
+Standalone script for setting up local Postgres data for CORA. It isn't
+part of the `cora` package -- it's a one-off tool you run against your dev
 database, not something the app imports at runtime.
 
 ## What it does
