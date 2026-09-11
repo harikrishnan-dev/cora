@@ -31,7 +31,21 @@ Minimum information required, depending on what the issue seems to be about:
 
 If the customer has provided enough detail for their apparent issue type,
 mark it complete even if some of the above fields are technically implicit
-(e.g. they only have one recent order and it's obvious which one they mean)."""
+(e.g. they only have one recent order and it's obvious which one they mean).
+
+Also record the canonical identifiers for this ticket -- the specialist team
+that handles it next will need them:
+- product_id: the product's SKU.
+- customer_id: the customer code.
+- order_id: the order code.
+
+Whenever the customer states one of these codes themselves, do not take
+their word for it -- call the matching lookup tool (get_product_details,
+get_customer_details, get_order_details) to confirm it actually exists
+before recording it. If the lookup fails, treat the code as unverified:
+leave that field null and ask the customer to double-check it as part of
+your clarifying question. Never fill a field with an unverified or
+guessed code."""
 
 CLASSIFY_PROMPT = """You are the classification step of a customer support bot.
 

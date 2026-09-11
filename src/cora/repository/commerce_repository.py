@@ -57,6 +57,13 @@ class CommerceRepository:
             (order_code, amount_cents, reason),
         )
 
+    def get_refund_requests_for_order(self, order_code: str) -> list[dict]:
+        return self._store.fetch_all(
+            "SELECT id, order_code, amount_cents, reason, status, requested_at, resolved_at "
+            "FROM refund_requests WHERE order_code = %s ORDER BY requested_at DESC",
+            (order_code,),
+        )
+
     def list_refund_requests(self, status: str | None = None) -> list[dict]:
         if status is None:
             return self._store.fetch_all(

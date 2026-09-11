@@ -1,29 +1,30 @@
 from __future__ import annotations
 
+from functools import partial
+
 from langgraph.checkpoint.base import BaseCheckpointSaver
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import END, StateGraph
 from langgraph.graph.state import CompiledStateGraph
 
-from cora.agents.state import HelpdeskState
+from cora.agents.triage.models import HelpdeskState
 from cora.agents.triage import make_classify_node, make_gather_info_node
+from cora.agents.refund import run_refund
 from cora.repository.commerce_repository import CommerceRepository
 from cora.repository.llm_repository import LLMRepository
 
-CATEGORY_TO_SPECIALIST = {
-    "refund": "refund",
-    "warranty_service": "warranty_service",
-    "shipping_delivery": "shipping_delivery",
-    "order_change": "order_changes",
-}
-
 
 def route_after_gather(state: HelpdeskState) -> str:
-    return "classify" if state.info_complete else END
+    return "classify" if state.info_gathered.info_complete else END
 
 
 def route_after_classify(state: HelpdeskState) -> str:
-    return CATEGORY_TO_SPECIALIST[state.category]
+    # Only `refund` has a specialist node so far -- everything else falls
+    # through to END with just the classification decision recorded,
+    # rather than looking up a node name that doesn't exist yet.
+    if state.classification_decision.category == "refund":
+        return "refund"
+    return END
 
 
 def build_graph(
@@ -33,13 +34,12 @@ def build_graph(
 ) -> CompiledStateGraph:
     """Build the customer-support graph.
 
-    gather_info -> classify -> {refund, warranty_service, shipping_delivery,
-    order_changes} -> END
+    gather_info -> classify -> {refund, END} -> END
 
-    Both repositories default to real, Postgres/Anthropic-backed instances, but
-    accepting them as parameters means this is the single place that
-    decides which repository each node uses -- callers (tests included) can
-    pass in a fake/stub repository instead.
+    `classify` only decides the category; `route_after_classify` sends
+    execution on to the matching specialist node (currently just
+    `refund`) via a conditional edge, or straight to `END` for any
+    category without a specialist node yet.
 
     Compiled with a checkpointer so conversation state (messages,
     info_complete, category, urgency) persists across `.invoke()` calls for
@@ -51,36 +51,21 @@ def build_graph(
     commerce_repository = commerce_repository or CommerceRepository()
     checkpointer = checkpointer or InMemorySaver()
 
-    graph = StateGraph(HelpdeskState)
+    graph = StateGraph[HelpdeskState, None, HelpdeskState, HelpdeskState](HelpdeskState)
 
     graph.add_node(
         "gather_info", make_gather_info_node(llm_repository, commerce_repository)
     )
     graph.add_node("classify", make_classify_node(llm_repository))
-    # graph.add_node("refund", make_refund_node(llm_repository, commerce_repository))
-    # graph.add_node(
-    #     "warranty_service", make_warranty_service_node(llm_repository, commerce_repository)
-    # )
-    # graph.add_node(
-    #     "shipping_delivery", make_shipping_delivery_node(llm_repository, commerce_repository)
-    # )
-    # graph.add_node("order_changes", make_order_changes_node(llm_repository, commerce_repository))
+    graph.add_node("refund", partial(run_refund, llm_repository, commerce_repository))
 
     graph.add_conditional_edges(
         "gather_info", route_after_gather, {"classify": "classify", END: END}
     )
-    # graph.add_conditional_edges(
-    #     "classify",
-    #     route_after_classify,
-    #     {
-    #         "refund": "refund",
-    #         "warranty_service": "warranty_service",
-    #         "shipping_delivery": "shipping_delivery",
-    #         "order_changes": "order_changes",
-    #     },
-    # )
-    # for specialist in ("refund", "warranty_service", "shipping_delivery", "order_changes"):
-    #     graph.add_edge(specialist, END)
+    graph.add_conditional_edges(
+        "classify", route_after_classify, {"refund": "refund", END: END}
+    )
+    graph.add_edge("refund", END)
 
     graph.set_entry_point("gather_info")
 
