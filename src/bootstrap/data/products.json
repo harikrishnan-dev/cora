@@ -1,0 +1,18 @@
+[
+  { "sku": "NB-TENT-2P", "name": "Alpine 2-Person Tent", "category": "Outdoor Gear", "price_cents": 18900, "warranty_months": 24 },
+  { "sku": "NB-JACKET-M", "name": "Summit Waterproof Jacket", "category": "Apparel", "price_cents": 12500, "warranty_months": 12 },
+  { "sku": "NB-BOOTS-HIKE", "name": "Ridgeline Hiking Boots", "category": "Footwear", "price_cents": 14900, "warranty_months": 6 },
+  { "sku": "NB-HEADLAMP", "name": "Trailblazer LED Headlamp", "category": "Electronics", "price_cents": 3200, "warranty_months": 12 },
+  { "sku": "NB-COOLER-45", "name": "Frostbox 45L Cooler", "category": "Outdoor Gear", "price_cents": 24900, "warranty_months": 60 },
+  { "sku": "NB-SLEEPBAG", "name": "Ember 20F Sleeping Bag", "category": "Outdoor Gear", "price_cents": 8900, "warranty_months": 24 },
+  { "sku": "NB-BACKPACK-40", "name": "Wayfinder 40L Backpack", "category": "Outdoor Gear", "price_cents": 15900, "warranty_months": 24 },
+  { "sku": "NB-WATERBOTTLE", "name": "Glacier Insulated Bottle", "category": "Home & Kitchen", "price_cents": 2900, "warranty_months": 12 },
+  { "sku": "NB-STOVE-CAMP", "name": "Ember Portable Camp Stove", "category": "Outdoor Gear", "price_cents": 6500, "warranty_months": 12 },
+  { "sku": "NB-SPEAKER-BT", "name": "Basecamp Bluetooth Speaker", "category": "Electronics", "price_cents": 5900, "warranty_months": 12 },
+  { "sku": "NB-FLEECE-W", "name": "Timberline Fleece Pullover", "category": "Apparel", "price_cents": 7900, "warranty_months": 12 },
+  { "sku": "NB-SANDALS", "name": "Driftwood Trail Sandals", "category": "Footwear", "price_cents": 4900, "warranty_months": 6 },
+  { "sku": "NB-KNIFE-MULTI", "name": "Basecamp Multi-Tool Knife", "category": "Outdoor Gear", "price_cents": 3900, "warranty_months": 60 },
+  { "sku": "NB-MUG-CAMP", "name": "Ember Camp Mug Set", "category": "Home & Kitchen", "price_cents": 2400, "warranty_months": 12 },
+  { "sku": "NB-POWERBANK", "name": "Voyager 20000mAh Power Bank", "category": "Electronics", "price_cents": 4500, "warranty_months": 12 },
+  { "sku": "NB-HAT-SUN", "name": "Horizon Wide-Brim Sun Hat", "category": "Apparel", "price_cents": 2900, "warranty_months": 6 }
+]

@@ -1,0 +1,8 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "customer_support": "./src/it_man/agents/graph.py:load_graph"
+  },
+  "env": ".env",
+  "python_version": "3.13"
+}

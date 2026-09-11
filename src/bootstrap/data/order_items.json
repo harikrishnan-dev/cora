@@ -1,0 +1,55 @@
+[
+  { "order_code": "ORD-10001", "sku": "NB-JACKET-M", "quantity": 1, "unit_price_cents": 12500 },
+
+  { "order_code": "ORD-10002", "sku": "NB-HEADLAMP", "quantity": 1, "unit_price_cents": 3200 },
+  { "order_code": "ORD-10002", "sku": "NB-WATERBOTTLE", "quantity": 2, "unit_price_cents": 2900 },
+
+  { "order_code": "ORD-10003", "sku": "NB-BACKPACK-40", "quantity": 1, "unit_price_cents": 15900 },
+
+  { "order_code": "ORD-10004", "sku": "NB-TENT-2P", "quantity": 1, "unit_price_cents": 18900 },
+
+  { "order_code": "ORD-10005", "sku": "NB-BOOTS-HIKE", "quantity": 1, "unit_price_cents": 14900 },
+  { "order_code": "ORD-10005", "sku": "NB-COOLER-45", "quantity": 1, "unit_price_cents": 24900 },
+
+  { "order_code": "ORD-10006", "sku": "NB-FLEECE-W", "quantity": 1, "unit_price_cents": 7900 },
+
+  { "order_code": "ORD-10007", "sku": "NB-JACKET-M", "quantity": 1, "unit_price_cents": 12500 },
+
+  { "order_code": "ORD-10008", "sku": "NB-STOVE-CAMP", "quantity": 1, "unit_price_cents": 6500 },
+  { "order_code": "ORD-10008", "sku": "NB-MUG-CAMP", "quantity": 1, "unit_price_cents": 2400 },
+
+  { "order_code": "ORD-10009", "sku": "NB-SPEAKER-BT", "quantity": 1, "unit_price_cents": 5900 },
+
+  { "order_code": "ORD-10010", "sku": "NB-SANDALS", "quantity": 1, "unit_price_cents": 4900 },
+
+  { "order_code": "ORD-10011", "sku": "NB-KNIFE-MULTI", "quantity": 1, "unit_price_cents": 3900 },
+  { "order_code": "ORD-10011", "sku": "NB-POWERBANK", "quantity": 1, "unit_price_cents": 4500 },
+
+  { "order_code": "ORD-10012", "sku": "NB-HAT-SUN", "quantity": 2, "unit_price_cents": 2900 },
+
+  { "order_code": "ORD-10013", "sku": "NB-COOLER-45", "quantity": 1, "unit_price_cents": 24900 },
+
+  { "order_code": "ORD-10014", "sku": "NB-TENT-2P", "quantity": 1, "unit_price_cents": 18900 },
+  { "order_code": "ORD-10014", "sku": "NB-SLEEPBAG", "quantity": 1, "unit_price_cents": 8900 },
+
+  { "order_code": "ORD-10015", "sku": "NB-BOOTS-HIKE", "quantity": 1, "unit_price_cents": 14900 },
+
+  { "order_code": "ORD-10016", "sku": "NB-BACKPACK-40", "quantity": 1, "unit_price_cents": 15900 },
+
+  { "order_code": "ORD-10017", "sku": "NB-HEADLAMP", "quantity": 1, "unit_price_cents": 3200 },
+
+  { "order_code": "ORD-10018", "sku": "NB-WATERBOTTLE", "quantity": 1, "unit_price_cents": 2900 },
+  { "order_code": "ORD-10018", "sku": "NB-MUG-CAMP", "quantity": 1, "unit_price_cents": 2400 },
+
+  { "order_code": "ORD-10019", "sku": "NB-SPEAKER-BT", "quantity": 1, "unit_price_cents": 5900 },
+
+  { "order_code": "ORD-10020", "sku": "NB-SANDALS", "quantity": 1, "unit_price_cents": 4900 },
+
+  { "order_code": "ORD-10021", "sku": "NB-FLEECE-W", "quantity": 1, "unit_price_cents": 7900 },
+
+  { "order_code": "ORD-10022", "sku": "NB-STOVE-CAMP", "quantity": 1, "unit_price_cents": 6500 },
+
+  { "order_code": "ORD-10023", "sku": "NB-POWERBANK", "quantity": 1, "unit_price_cents": 4500 },
+
+  { "order_code": "ORD-10024", "sku": "NB-KNIFE-MULTI", "quantity": 1, "unit_price_cents": 3900 }
+]

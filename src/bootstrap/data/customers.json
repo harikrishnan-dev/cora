@@ -1,0 +1,20 @@
+[
+  { "customer_code": "CUST-0001", "full_name": "Maya Lindqvist", "email": "maya.lindqvist@gmail.com", "phone": "555-0142" },
+  { "customer_code": "CUST-0002", "full_name": "Andre Souza", "email": "andre.souza82@yahoo.com", "phone": "555-0198" },
+  { "customer_code": "CUST-0003", "full_name": "Priya Chandran", "email": "priya.chandran@outlook.com", "phone": "555-0173" },
+  { "customer_code": "CUST-0004", "full_name": "Tobias Reyes", "email": "tobias.reyes@gmail.com", "phone": "555-0110" },
+  { "customer_code": "CUST-0005", "full_name": "Hana Kobayashi", "email": "hana.kobayashi@proton.me", "phone": "555-0221" },
+  { "customer_code": "CUST-0006", "full_name": "Liam O'Rourke", "email": "liam.orourke@gmail.com", "phone": "555-0134" },
+  { "customer_code": "CUST-0007", "full_name": "Fatima Al-Sayed", "email": "fatima.alsayed@yahoo.com", "phone": "555-0167" },
+  { "customer_code": "CUST-0008", "full_name": "Noah Bergstrom", "email": "noah.bergstrom@outlook.com", "phone": "555-0189" },
+  { "customer_code": "CUST-0009", "full_name": "Camila Duarte", "email": "camila.duarte@gmail.com", "phone": "555-0205" },
+  { "customer_code": "CUST-0010", "full_name": "Dmitri Volkov", "email": "dmitri.volkov@yahoo.com", "phone": "555-0158" },
+  { "customer_code": "CUST-0011", "full_name": "Aisha Bello", "email": "aisha.bello@gmail.com", "phone": "555-0177" },
+  { "customer_code": "CUST-0012", "full_name": "Ethan Park", "email": "ethan.park@outlook.com", "phone": "555-0129" },
+  { "customer_code": "CUST-0013", "full_name": "Ingrid Solvang", "email": "ingrid.solvang@proton.me", "phone": "555-0144" },
+  { "customer_code": "CUST-0014", "full_name": "Marcus Tan", "email": "marcus.tan@gmail.com", "phone": "555-0192" },
+  { "customer_code": "CUST-0015", "full_name": "Zara Ahmed", "email": "zara.ahmed@yahoo.com", "phone": "555-0116" },
+  { "customer_code": "CUST-0016", "full_name": "Diego Fernandez", "email": "diego.fernandez@gmail.com", "phone": "555-0203" },
+  { "customer_code": "CUST-0017", "full_name": "Sophie Laurent", "email": "sophie.laurent@outlook.com", "phone": "555-0161" },
+  { "customer_code": "CUST-0018", "full_name": "Kwame Mensah", "email": "kwame.mensah@gmail.com", "phone": "555-0137" }
+]
