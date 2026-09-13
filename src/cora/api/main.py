@@ -62,6 +62,8 @@ def chat(request: ChatRequest) -> ChatResponse:
     result = HelpdeskState.model_validate(raw_result)
     if result.refund_result:
         reply = result.refund_result
+    elif result.shipping_delivery_result:
+        reply = result.shipping_delivery_result
     elif result.classification_decision:
         # Classified, but that category's specialist node isn't wired up yet.
         reply = (

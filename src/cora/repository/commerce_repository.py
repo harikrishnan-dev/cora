@@ -22,9 +22,15 @@ class CommerceRepository:
         )
 
     def get_order(self, order_code: str) -> dict | None:
+        # LEFT JOIN, not INNER -- an order with no shipment yet (placed,
+        # cancelled) has shipment_id NULL, and should still come back with
+        # carrier/tracking_number/etc. simply NULL rather than disappearing.
         return self._store.fetch_one(
-            "SELECT order_code, customer_code, order_date, status, total_cents, shipping_address "
-            "FROM orders WHERE order_code = %s",
+            "SELECT o.order_code, o.customer_code, o.order_date, o.status, o.total_cents, "
+            "o.shipping_address, s.carrier, s.tracking_number, s.shipped_at, "
+            "s.estimated_delivery_date "
+            "FROM orders o LEFT JOIN shipments s ON s.id = o.shipment_id "
+            "WHERE o.order_code = %s",
             (order_code,),
         )
 
@@ -47,6 +53,13 @@ class CommerceRepository:
             "UPDATE orders SET status = %s WHERE order_code = %s "
             "RETURNING order_code, customer_code, order_date, status, total_cents, shipping_address",
             (status, order_code),
+        )
+
+    def update_shipping_address(self, order_code: str, shipping_address: str) -> dict | None:
+        return self._store.fetch_one(
+            "UPDATE orders SET shipping_address = %s WHERE order_code = %s "
+            "RETURNING order_code, customer_code, order_date, status, total_cents, shipping_address",
+            (shipping_address, order_code),
         )
 
     def create_refund_request(self, order_code: str, amount_cents: int, reason: str) -> dict:

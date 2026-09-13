@@ -4,31 +4,45 @@ from langchain_core.tools import tool
 
 from cora.repository.commerce_repository import CommerceRepository
 
+# Orders move placed -> shipped -> delivered (or placed -> cancelled). Only
+# "placed" means nothing has left the warehouse yet -- once it's "shipped"
+# or "delivered" the shipping address can no longer be changed, and a
+# "cancelled" order isn't going anywhere at all.
+ADDRESS_EDITABLE_STATUSES = {"placed"}
 
-def make_shipping_delivery_tools(commerce_repository: CommerceRepository) -> list:
+
+def make_shipping_tools(commerce_repository: CommerceRepository) -> list:
     @tool
-    def get_shipping_status(order_code: str) -> dict:
-        """Look up the shipping status of an order."""
+    def update_shipping_address(order_code: str, new_address: str) -> dict:
+        """Update the shipping address for an order.
+
+        Only works while the order hasn't been packed/shipped yet (status
+        'placed'). Always check the return value -- if `updated` is False,
+        the order has already shipped (or was cancelled) and the address
+        cannot be changed; tell the customer instead of assuming it worked.
+
+        Args:
+            order_code: The order to update.
+            new_address: The full new shipping address.
+        """
         order = commerce_repository.get_order(order_code)
         if not order:
             return {"error": f"No order found with code {order_code}"}
-        return {
-            "order_code": order_code,
-            "status": order["status"],
-            "shipping_address": order["shipping_address"],
-        }
 
-    @tool
-    def initiate_reshipment(order_code: str, reason: str) -> dict:
-        """Trigger a reshipment for a lost, damaged, or misdelivered order.
+        if order["status"] not in ADDRESS_EDITABLE_STATUSES:
+            reason = (
+                "This order was cancelled, so there's no shipment to update."
+                if order["status"] == "cancelled"
+                else f"Order is already '{order['status']}' -- it has already been dispatched."
+            )
+            return {
+                "updated": False,
+                "order_code": order_code,
+                "status": order["status"],
+                "reason": reason,
+            }
 
-        STUB: logs and returns a fake confirmation; no real shipping/carrier
-        system is wired up yet. Not gated by human approval -- per policy,
-        approval is reserved for actions that delete records or refund
-        money, and a reshipment is neither.
-        """
-        reshipment = {"status": "reshipment_initiated", "order_code": order_code, "reason": reason}
-        print(f"[stub] reshipment initiated: {reshipment}")
-        return reshipment
+        updated = commerce_repository.update_shipping_address(order_code, new_address)
+        return {"updated": True, **updated}
 
-    return [get_shipping_status, initiate_reshipment]
+    return [update_shipping_address]

@@ -1,12 +1,13 @@
 """Bootstraps the Postgres database for CORA.
 
-Creates the `customers`, `products`, `orders`, `order_items`, and
-`refund_requests` tables (if they don't already exist) and fills the first
-four with curated synthetic data loaded from `data/*.json` (a fictional
-outdoor-gear store, "Northbound Supply Co."), so the customer-support
-agents' tools have real orders/products/customers to query.
-`refund_requests` starts empty -- it's populated at runtime when the Refund
-agent submits a request for human approval.
+Creates the `customers`, `products`, `shipments`, `orders`, `order_items`,
+and `refund_requests` tables (if they don't already exist) and fills the
+first two plus `shipments`/`orders`/`order_items` with curated synthetic
+data loaded from `data/*.json` (a fictional outdoor-gear store, "Northbound
+Supply Co."), so the customer-support agents' tools have real
+orders/products/customers to query. `refund_requests` starts empty -- it's
+populated at runtime when the Refund agent submits a request for human
+approval.
 
 Run with: `uv run python src/bootstrap/seed.py`
 (Start Postgres first: `docker compose up -d`)
@@ -43,6 +44,18 @@ CREATE TABLE IF NOT EXISTS products (
     warranty_months INTEGER NOT NULL DEFAULT 0
 );
 
+-- One row per shipment (carrier/tracking/dates) -- created once an order
+-- actually ships. Kept as its own table, not columns on `orders`, since
+-- an order has no shipment at all until then; `orders.shipment_id` is
+-- null up to that point rather than a row of all-null shipping columns.
+CREATE TABLE IF NOT EXISTS shipments (
+    id SERIAL PRIMARY KEY,
+    carrier TEXT NOT NULL,
+    tracking_number TEXT NOT NULL,
+    shipped_at TIMESTAMPTZ NOT NULL,
+    estimated_delivery_date DATE
+);
+
 CREATE TABLE IF NOT EXISTS orders (
     id SERIAL PRIMARY KEY,
     order_code TEXT UNIQUE NOT NULL,
@@ -50,8 +63,15 @@ CREATE TABLE IF NOT EXISTS orders (
     order_date DATE NOT NULL,
     status TEXT NOT NULL,
     total_cents INTEGER NOT NULL DEFAULT 0,
-    shipping_address TEXT
+    shipping_address TEXT,
+    shipment_id INTEGER REFERENCES shipments(id)
 );
+
+-- ALTER (not just the inline column above) so a database whose `orders`
+-- table already existed before `shipment_id` was introduced still picks
+-- it up -- CREATE TABLE IF NOT EXISTS is a no-op against an existing
+-- table, so a live database wouldn't otherwise gain the column at all.
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipment_id INTEGER REFERENCES shipments(id);
 
 CREATE TABLE IF NOT EXISTS order_items (
     id SERIAL PRIMARY KEY,
@@ -100,6 +120,13 @@ def create_tables(conn: psycopg.Connection) -> None:
 def already_seeded(conn: psycopg.Connection) -> bool:
     with conn.cursor() as cur:
         cur.execute("SELECT COUNT(*) FROM customers")
+        (count,) = cur.fetchone()
+    return count > 0
+
+
+def shipments_seeded(conn: psycopg.Connection) -> bool:
+    with conn.cursor() as cur:
+        cur.execute("SELECT COUNT(*) FROM shipments")
         (count,) = cur.fetchone()
     return count > 0
 
@@ -154,6 +181,34 @@ def seed_orders(conn: psycopg.Connection, orders: list[dict]) -> None:
     conn.commit()
 
 
+def seed_shipments(conn: psycopg.Connection, shipments: list[dict]) -> None:
+    """Insert each shipment and link it back to its order.
+
+    Requires `seed_orders` to have already run -- each entry references its
+    order by `order_code`, same convention as `order_items.json`. Only
+    orders that have actually shipped appear here at all; every other
+    order keeps `shipment_id` NULL.
+    """
+    with conn.cursor() as cur:
+        for shipment in shipments:
+            cur.execute(
+                "INSERT INTO shipments (carrier, tracking_number, shipped_at, estimated_delivery_date) "
+                "VALUES (%s, %s, %s, %s) RETURNING id",
+                (
+                    shipment["carrier"],
+                    shipment["tracking_number"],
+                    shipment["shipped_at"],
+                    shipment["estimated_delivery_date"],
+                ),
+            )
+            (shipment_id,) = cur.fetchone()
+            cur.execute(
+                "UPDATE orders SET shipment_id = %s WHERE order_code = %s",
+                (shipment_id, shipment["order_code"]),
+            )
+    conn.commit()
+
+
 def seed_order_items(conn: psycopg.Connection, products_by_sku: dict[str, dict], items: list[dict]) -> None:
     with conn.cursor() as cur:
         for item in items:
@@ -184,22 +239,33 @@ def main() -> None:
 
         if already_seeded(conn):
             print("Database already has customers -- skipping seed.")
+            # `shipments` was added after some databases were already
+            # seeded -- backfill it on its own rather than requiring a
+            # full reseed, without touching any existing data (including
+            # anything created at runtime, like refund_requests).
+            if not shipments_seeded(conn):
+                shipments = load_data("shipments.json")
+                seed_shipments(conn, shipments)
+                print(f"Backfilled {len(shipments)} shipments.")
             return
 
         customers = load_data("customers.json")
         products = load_data("products.json")
         orders = load_data("orders.json")
         order_items = load_data("order_items.json")
+        shipments = load_data("shipments.json")
         products_by_sku = {p["sku"]: p for p in products}
 
         seed_customers(conn, customers)
         seed_products(conn, products)
         seed_orders(conn, orders)
         seed_order_items(conn, products_by_sku, order_items)
+        seed_shipments(conn, shipments)
 
         print(
             f"Seeded {len(customers)} customers, {len(products)} products, "
-            f"{len(orders)} orders, and {len(order_items)} order line items."
+            f"{len(orders)} orders, {len(order_items)} order line items, "
+            f"and {len(shipments)} shipments."
         )
 
 

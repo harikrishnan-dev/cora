@@ -26,5 +26,9 @@ def test_route_after_classify_sends_refund_category_to_refund_node():
     assert route_after_classify(_classified_state("refund")) == "refund"
 
 
+def test_route_after_classify_sends_shipping_delivery_category_to_its_node():
+    assert route_after_classify(_classified_state("shipping_delivery")) == "shipping_delivery"
+
+
 def test_route_after_classify_ends_for_categories_without_a_specialist_node():
     assert route_after_classify(_classified_state("warranty_service")) == END
