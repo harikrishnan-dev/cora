@@ -20,7 +20,7 @@ class InfoGatheringDecision(BaseModel):
 
 
 class ClassificationDecision(BaseModel):
-    category: Literal["refund", "warranty_service", "shipping_delivery", "order_change"]
+    category: Literal["warranty_service", "shipping_delivery"]
     urgency: Literal["low", "medium", "high", "critical"]
 
 
@@ -40,4 +40,6 @@ class HelpdeskState(BaseModel):
     query_details: QueryDetails | None = None
     refund_result: str | None = None
     shipping_delivery_result: str | None = None
+    warranty_service_result: str | None = None
+    warranty_handoff_reason: str | None = None
 

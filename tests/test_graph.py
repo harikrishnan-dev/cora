@@ -28,4 +28,10 @@ class _FakeCommerceRepository:
 def test_build_graph_has_expected_nodes():
     graph = build_graph(_FakeLLMRepository(), _FakeCommerceRepository())
     node_names = set(graph.get_graph().nodes.keys())
-    assert {"gather_info", "classify", "refund", "shipping_delivery"}.issubset(node_names)
+    assert {
+        "gather_info",
+        "classify",
+        "refund",
+        "shipping_delivery",
+        "warranty_service",
+    }.issubset(node_names)

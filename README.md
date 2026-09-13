@@ -9,20 +9,35 @@ Triage figures out what they need and routes to a specialist team.
 
 - `src/cora/agents/graph.py` — the top-level graph: `gather_info` (asks one
   clarifying question until enough detail has been collected) → `classify`
-  (structured-output classification into one of 4 categories) → one of 4
-  specialist agents → `END`.
+  (structured-output classification into `shipping_delivery` or
+  `warranty_service` — `refund` is not a classify-time destination) → the
+  matching specialist → `END`. `warranty_service` is the front door for
+  anything that isn't a shipping issue — a defect claim, or a plain refund
+  request with no defect — and decides for itself whether to resolve the
+  case or hand it off to `refund` (`route_after_warranty_service`); `refund`
+  is otherwise only reachable via the standalone `/refund/chat` endpoint.
 - `src/cora/agents/triage/` — `gather_info` and `classify`, both pure
   structured-output steps (no tool-calling).
-- `src/cora/agents/{refund,warranty_service,shipping_delivery,order_changes}/`
-  — the 4 specialist agents, each a tool-calling `create_agent` bound to the
-  shared commerce-lookup tools plus its own domain tools:
-  - **Refund** — `request_refund` submits a request for human approval; it
-    never processes a refund directly.
-  - **Warranty & Service** — `check_warranty_eligibility`, `create_service_ticket`.
-  - **Shipping & Delivery** — `get_shipping_status`, `initiate_reshipment`.
-  - **Order Changes & Cancellation** — `check_order_editable`, `cancel_order`.
+- `src/cora/agents/{refund,warranty_service,shipping_delivery}/` — the 3
+  specialist agents, each a tool-calling `create_agent` bound to the shared
+  commerce-lookup tools plus its own domain tools, wrapped in a `decide` <->
+  `ask_human` graph that pauses via `interrupt()` to ask the customer a
+  clarifying question when needed:
+  - **Refund** — `get_refund_policy`, `is_already_refunded_or_not`,
+    `initiate_refund` submits a request for human approval; it never
+    processes a refund directly.
+  - **Warranty & Service** — `check_warranty_eligibility`,
+    `get_warranty_coverage_policy`, `check_return_policy`,
+    `decide_repair_vs_replace`, `estimate_repair_cost`,
+    `create_service_ticket`. `ForwardToRefund` hands the ticket to Refund,
+    but only for a genuine covered defect whose category isn't practical to
+    service in-house, or a no-defect refund request with a valid return
+    policy -- an ineligible or customer-caused claim is denied outright,
+    never forwarded.
+  - **Shipping & Delivery** — `update_shipping_address`.
 - `src/cora/agents/common/commerce_tools.py` — `get_customer_details`,
-  `get_order_details`, `get_order_items`, shared by all 4 specialists.
+  `get_order_details`, `get_order_items`, `get_product_details`, shared by
+  all 3 specialists.
 - `src/cora/store/` — thin wrappers around external clients (`AnthropicStore` for
   `langchain_anthropic`, `PostgresStore` for `psycopg`). Nothing outside `store/` should
   import those client libraries directly.

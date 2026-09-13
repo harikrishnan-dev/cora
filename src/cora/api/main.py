@@ -64,6 +64,8 @@ def chat(request: ChatRequest) -> ChatResponse:
         reply = result.refund_result
     elif result.shipping_delivery_result:
         reply = result.shipping_delivery_result
+    elif result.warranty_service_result:
+        reply = result.warranty_service_result
     elif result.classification_decision:
         # Classified, but that category's specialist node isn't wired up yet.
         reply = (
