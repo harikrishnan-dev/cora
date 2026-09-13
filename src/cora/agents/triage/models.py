@@ -39,4 +39,5 @@ class HelpdeskState(BaseModel):
     compacted_message: str | None  = None
     query_details: QueryDetails | None = None
     refund_result: str | None = None
+    shipping_delivery_result: str | None = None
 
