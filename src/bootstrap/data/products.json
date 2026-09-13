@@ -14,5 +14,17 @@
   { "sku": "NB-KNIFE-MULTI", "name": "Basecamp Multi-Tool Knife", "category": "Outdoor Gear", "price_cents": 3900, "warranty_months": 60 },
   { "sku": "NB-MUG-CAMP", "name": "Ember Camp Mug Set", "category": "Home & Kitchen", "price_cents": 2400, "warranty_months": 12 },
   { "sku": "NB-POWERBANK", "name": "Voyager 20000mAh Power Bank", "category": "Electronics", "price_cents": 4500, "warranty_months": 12 },
-  { "sku": "NB-HAT-SUN", "name": "Horizon Wide-Brim Sun Hat", "category": "Apparel", "price_cents": 2900, "warranty_months": 6 }
+  { "sku": "NB-HAT-SUN", "name": "Horizon Wide-Brim Sun Hat", "category": "Apparel", "price_cents": 2900, "warranty_months": 6 },
+  { "sku": "NB-PHONE-X12", "name": "Northbound Smartphone X12", "category": "Electronics", "price_cents": 89900, "warranty_months": 12 },
+  { "sku": "NB-TV-55OLED", "name": "Northbound 55\" OLED Smart TV", "category": "Electronics", "price_cents": 129900, "warranty_months": 24 },
+  { "sku": "NB-LAPTOP-14", "name": "Northbound Laptop 14", "category": "Electronics", "price_cents": 109900, "warranty_months": 12 },
+  { "sku": "NB-WASHER-FL", "name": "Northbound Front-Load Washing Machine", "category": "Appliances", "price_cents": 74900, "warranty_months": 36 },
+  { "sku": "NB-FRIDGE-2D", "name": "Northbound 2-Door Refrigerator", "category": "Appliances", "price_cents": 129900, "warranty_months": 36 },
+  { "sku": "NB-DRESS-SUN", "name": "Meridian Sundress", "category": "Apparel", "price_cents": 6900, "warranty_months": 6 },
+  { "sku": "NB-DRESS-MAXI", "name": "Wanderlust Maxi Dress", "category": "Apparel", "price_cents": 8900, "warranty_months": 6 },
+  { "sku": "NB-DRESS-WRAP", "name": "Harborview Wrap Dress", "category": "Apparel", "price_cents": 7400, "warranty_months": 6 },
+  { "sku": "NB-SOFA-3S", "name": "Driftwood 3-Seat Sofa", "category": "Furniture", "price_cents": 89900, "warranty_months": 60 },
+  { "sku": "NB-TABLE-DINE", "name": "Basecamp Dining Table", "category": "Furniture", "price_cents": 45900, "warranty_months": 60 },
+  { "sku": "NB-CHAIR-ACCENT", "name": "Horizon Accent Chair", "category": "Furniture", "price_cents": 24900, "warranty_months": 36 },
+  { "sku": "NB-BEDFRAME-Q", "name": "Timberline Queen Bed Frame", "category": "Furniture", "price_cents": 54900, "warranty_months": 60 }
 ]

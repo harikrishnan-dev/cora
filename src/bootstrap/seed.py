@@ -239,6 +239,12 @@ def main() -> None:
 
         if already_seeded(conn):
             print("Database already has customers -- skipping seed.")
+            # New catalog entries added to products.json after the initial
+            # seed still need to land in an already-seeded database --
+            # seed_products is idempotent (ON CONFLICT DO NOTHING on sku),
+            # so it's safe to re-run against existing data.
+            products = load_data("products.json")
+            seed_products(conn, products)
             # `shipments` was added after some databases were already
             # seeded -- backfill it on its own rather than requiring a
             # full reseed, without touching any existing data (including

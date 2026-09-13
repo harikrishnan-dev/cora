@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     api_port: int = 8000
     api_url: str = "http://localhost:8000"
 
+    admin_api_key: str = "dev-admin-key"
+    session_secret: str = "dev-session-secret-change-me"
+
     postgres_host: str = "localhost"
     postgres_port: int = 5432
     postgres_db: str = "cora"

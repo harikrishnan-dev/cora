@@ -16,8 +16,15 @@ def render() -> None:
     st.title("Pending Requests")
     st.caption("Refund requests awaiting human approval")
 
+    headers = {"X-API-Key": settings.admin_api_key}
+
     try:
-        response = requests.get(f"{settings.api_url}/refund-requests", params={"status": "pending"}, timeout=30)
+        response = requests.get(
+            f"{settings.api_url}/refund-requests",
+            params={"status": "pending"},
+            headers=headers,
+            timeout=30,
+        )
         response.raise_for_status()
         requests_data = response.json()
     except requests.RequestException as exc:
@@ -39,11 +46,15 @@ def render() -> None:
             approve_col, reject_col = st.columns(2)
             if approve_col.button("Approve", key=f"approve-{item['id']}", type="primary"):
                 requests.post(
-                    f"{settings.api_url}/refund-requests/{item['id']}/approve", timeout=30
+                    f"{settings.api_url}/refund-requests/{item['id']}/approve",
+                    headers=headers,
+                    timeout=30,
                 )
                 st.rerun()
             if reject_col.button("Reject", key=f"reject-{item['id']}"):
                 requests.post(
-                    f"{settings.api_url}/refund-requests/{item['id']}/reject", timeout=30
+                    f"{settings.api_url}/refund-requests/{item['id']}/reject",
+                    headers=headers,
+                    timeout=30,
                 )
                 st.rerun()
