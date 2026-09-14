@@ -30,7 +30,10 @@ class Settings(BaseSettings):
 
     @property
     def database_url(self) -> str:
-        return (
+        # Render (and most PaaS Postgres add-ons) hand you a single
+        # DATABASE_URL rather than discrete host/user/password vars -- prefer
+        # that when set, same as bootstrap/seed.py's own get_database_url().
+        return os.environ.get("DATABASE_URL") or (
             f"postgresql://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
         )

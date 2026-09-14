@@ -7,9 +7,11 @@ from functools import lru_cache
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import APIKeyHeader
 from langchain_core.messages import HumanMessage
-from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.checkpoint.postgres import PostgresSaver
 from langgraph.graph.state import CompiledStateGraph
 from langgraph.types import Command
+from psycopg.rows import dict_row
+from psycopg_pool import ConnectionPool
 
 from cora.agents.graph import build_graph
 from cora.agents.refund import build_refund_agent
@@ -44,14 +46,38 @@ def require_admin_key(api_key: str | None = Depends(_admin_api_key_header)) -> N
 
 
 @lru_cache(maxsize=1)
+def _get_checkpointer() -> PostgresSaver:
+    """One shared Postgres-backed checkpointer for every graph in this
+    process, so conversation state (paused interrupts included) survives
+    process restarts -- unlike `InMemorySaver`, which loses it all on every
+    redeploy. A `ConnectionPool` (not a single `Connection`) since FastAPI
+    can run these sync endpoints from multiple worker threads at once, and
+    a lone psycopg connection isn't safe to share across threads.
+
+    `.setup()` creates this checkpointer's own tables -- idempotent, same
+    spirit as bootstrap/seed.py's `CREATE TABLE IF NOT EXISTS`, safe to call
+    on every boot.
+    """
+    settings = get_settings()
+    pool = ConnectionPool(
+        conninfo=settings.database_url,
+        max_size=10,
+        kwargs={"autocommit": True, "prepare_threshold": 0, "row_factory": dict_row},
+    )
+    checkpointer = PostgresSaver(pool)
+    checkpointer.setup()
+    return checkpointer
+
+
+@lru_cache(maxsize=1)
 def _get_graph() -> CompiledStateGraph:
-    return build_graph()
+    return build_graph(checkpointer=_get_checkpointer())
 
 
 @lru_cache(maxsize=1)
 def _get_refund_agent() -> CompiledStateGraph:
     return build_refund_agent(
-        LLMRepository(), CommerceRepository(), checkpointer=InMemorySaver()
+        LLMRepository(), CommerceRepository(), checkpointer=_get_checkpointer()
     )
 
 

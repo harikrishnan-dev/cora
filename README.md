@@ -52,19 +52,25 @@ Triage figures out what they need and routes to a specialist team.
   /refund-requests/{id}/reject` back the human-approval flow for refunds — the only
   action in this app gated by human approval, per policy (approval is reserved for
   actions that delete records or refund money).
-- `src/cora/ui/app.py` — Streamlit multipage entry point with two pages:
+- `src/cora/ui/app.py` — Streamlit multipage entry point:
   - **Chat** (`views/chat.py`) — sends the latest message to `/chat` and
     renders the reply, including mid-conversation clarifying questions.
   - **Pending Requests** (`views/pending_requests.py`) — lists pending refund
     requests from the API with Approve/Reject actions.
+  - **Orders** (`views/orders.py`) — every order in the store, with shipment
+    status/carrier/tracking where available.
+  - **Policies** (`views/policies.py`) — pick a product, see its warranty
+    coverage and repair/replace/refund policy.
+  - **Customers** (`views/customers.py`) — every registered customer.
 - `src/cora/config.py` — settings loaded from environment / `.env`.
 - `src/bootstrap/` — standalone script (not part of the `cora` package) that creates
-  the Postgres tables (`customers`, `products`, `orders`, `order_items`,
-  `refund_requests`) and loads the first four with curated synthetic data from
+  the Postgres tables (`customers`, `products`, `shipments`, `orders`, `order_items`,
+  `refund_requests`) and loads the first five with curated synthetic data from
   `data/*.json` (a fictional outdoor-gear store, "Northbound Supply Co.", with 18
-  customers, 16 products, and 24 orders spanning different dates/statuses).
+  customers, 28 products, and 24 orders spanning different dates/statuses).
   `refund_requests` starts empty -- populated at runtime. `seed.py` is idempotent
-  (skips if `customers` is already populated).
+  (skips full seeding if `customers` is already populated, but always re-runs the
+  product seed and backfills `shipments` so new catalog entries still land).
 
 ## Running the project
 
@@ -102,6 +108,31 @@ In a second terminal (with the API running):
 ```bash
 uv run streamlit run src/cora/ui/app.py
 ```
+
+### Run with Docker instead
+
+`Dockerfile` runs the API and the UI together in a single container (the
+same image used to deploy to Render) — an alternative to steps 3–4 above if
+you'd rather not run two `uv run` processes by hand. Still needs Postgres
+from step 2.
+
+```bash
+docker compose up -d   # if not already running
+docker build -t cora .
+docker run --rm -p 8501:8501 \
+  -e ANTHROPIC_API_KEY=<your-key> \
+  -e DATABASE_URL=postgresql://cora:cora@host.docker.internal:5432/cora \
+  -e ADMIN_API_KEY=dev-admin-key \
+  -e SESSION_SECRET=dev-session-secret-change-me \
+  cora
+```
+
+Then open http://localhost:8501. `host.docker.internal` resolves to the host
+machine on Docker Desktop (Mac/Windows) out of the box; on Linux add
+`--add-host=host.docker.internal:host-gateway` to the `docker run` command.
+The container seeds the database itself on startup (same idempotent
+`seed.py`), runs the API on an internal-only port, and exposes only the
+Streamlit UI on `8501`.
 
 ### Tests and lint
 
