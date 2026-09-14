@@ -1,5 +1,9 @@
 # CORA
 
+**Goal:** show how a multi-agent LangGraph system can handle real e-commerce
+support tickets end to end — refunds, warranty/service, and shipping — with
+minimal human intervention.
+
 **CORA** — **C**ustomer **O**perations & **R**esolution **A**gent — is a
 multi-agent customer support app for e-commerce, built with **LangGraph**,
 **FastAPI**, **Streamlit**, and **uv**. A customer chats with the system;
