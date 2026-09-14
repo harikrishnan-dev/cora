@@ -48,6 +48,26 @@ class CommerceRepository:
             (sku,),
         )
 
+    def list_orders(self) -> list[dict]:
+        return self._store.fetch_all(
+            "SELECT o.order_code, o.customer_code, o.order_date, o.status, o.total_cents, "
+            "o.shipping_address, s.carrier, s.tracking_number, s.shipped_at, "
+            "s.estimated_delivery_date "
+            "FROM orders o LEFT JOIN shipments s ON s.id = o.shipment_id "
+            "ORDER BY o.order_date DESC"
+        )
+
+    def list_customers(self) -> list[dict]:
+        return self._store.fetch_all(
+            "SELECT customer_code, full_name, email, phone FROM customers ORDER BY full_name"
+        )
+
+    def list_products(self) -> list[dict]:
+        return self._store.fetch_all(
+            "SELECT sku, name, category, price_cents, warranty_months "
+            "FROM products ORDER BY name"
+        )
+
     def set_order_status(self, order_code: str, status: str) -> dict | None:
         return self._store.fetch_one(
             "UPDATE orders SET status = %s WHERE order_code = %s "

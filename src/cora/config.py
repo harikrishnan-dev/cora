@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     api_port: int = 8000
     api_url: str = "http://localhost:8000"
 
+    admin_api_key: str = "dev-admin-key"
+    session_secret: str = "dev-session-secret-change-me"
+
     postgres_host: str = "localhost"
     postgres_port: int = 5432
     postgres_db: str = "cora"
@@ -27,7 +30,10 @@ class Settings(BaseSettings):
 
     @property
     def database_url(self) -> str:
-        return (
+        # Render (and most PaaS Postgres add-ons) hand you a single
+        # DATABASE_URL rather than discrete host/user/password vars -- prefer
+        # that when set, same as bootstrap/seed.py's own get_database_url().
+        return os.environ.get("DATABASE_URL") or (
             f"postgresql://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
         )

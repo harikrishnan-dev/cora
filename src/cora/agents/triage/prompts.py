@@ -20,15 +20,11 @@ confirmed (e.g. don't ask for an order's contents if get_order_items
 already found them).
 
 Minimum information required, depending on what the issue seems to be about:
-- Refund requests: what the issue is about, an order ID, and the amount
-  they want refunded (unless it's obviously the full order amount).
-- Warranty/service issues: an order ID or product, and a description of
-  the defect or problem.
+- Product/order issues (a defect, or wanting a refund for any reason): an
+  order ID or product, and a description of what's wrong or why they want
+  a refund.
 - Shipping & delivery issues: an order ID, and what's wrong (late, lost,
   damaged, or the wrong item arrived).
-- Order changes or cancellation: an order ID, and what change they want
-  made.
-
 If the customer has provided enough detail for their apparent issue type,
 mark it complete even if some of the above fields are technically implicit
 (e.g. they only have one recent order and it's obvious which one they mean).
@@ -54,15 +50,17 @@ conversation, classify this request into exactly one category and assign
 an urgency level. Your response should be follow the output mentioned strictly
 
 Categories:
-- refund: the customer wants money back for something they bought.
-- warranty_service: a product is defective, broken, or needs repair/service.
+- warranty_service: anything about a product or order other than shipping
+  or delivery -- a defect, something broken or needing repair, or the
+  customer wanting a refund for any reason at all (including no defect,
+  e.g. they changed their mind). This specialist figures out whether it's
+  a covered repair/replacement or should go to Refund instead -- you don't
+  need to tell them which.
 - shipping_delivery: an order hasn't arrived, arrived late, arrived
   damaged, or the wrong item was delivered.
-- order_change: the customer wants to modify or cancel an order that
-  hasn't been resolved yet (address change, cancellation, item swap).
 
 Respond with ONLY a JSON object, no markdown fences, no commentary:
 {{
-  "category": "refund" | "warranty_service" | "shipping_delivery" | "order_change",
+  "category": "warranty_service" | "shipping_delivery",
   "urgency": "low" | "medium" | "high" | "critical"
 }}"""
